@@ -1,85 +1,46 @@
-const registrationForm=document.getElementById('registration-form');
-const userDataTable=document.getElementById('user-data');
-const userDataTableBody=userDataTable.querySelector('tbody');
-const dobInput=document.getElementById('dob');
-const dobError=document.getElementById('dobError');
+const http = require("http");
+const fs = require("fs")
 
-window.addEventListener('load', () => {
-    updateUserDataTable();
+let homeContent = "";
+let projectContent = "";
+let registrationContent = "";
+const args = require("minimist")(process.argv);
+const port=args.port
+fs.readFile("home.html", (err, home) => {
+    if (err) {
+        throw err;
+    }
+    homeContent=home;
 });
-
-registrationForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-
-const userData= {
-    name: document.getElementById('name').value,
-    email: document.getElementById('email').value,
-    password: document.getElementById('password').value,
-    dob: document.getElementById('dob').value,
-    terms: document.getElementById('terms').checked
-};
-
-if (!validateUserData(userData)){
-    const errorMessage=document.createElement('p');
-    errorMessage.textContent='Value must be 09/11/1967 or later';
-    errorMessage.classList.add('error-message');
-
-    const dateField=document.getElementById('dob');
-    dateField.parentNode.appendChild(errorMessage);
-
-
-    
-
-} else {
-    saveUserData(userData);
-    updateUserDataTable();
-    clearForm();
-}
-
+fs.readFile("project.html", (err,project) => {
+    if (err) {
+        throw err;
+    }
+    projectContent = project;
 });
-function validateUserData(userData) {
-    const minAge = 18;
-    const maxAge = 55;
-    const today = new Date();
-    const birthDate = new Date(userData.dob);
-    const age = today.getFullYear() - birthDate.getFullYear();
-    if (age < minAge || age > maxAge) {
-        return false;
+fs.readFile("registration.html", (err,registration) => {
+    if (err) {
+        throw err;
     }
-    return true;
+    registrationContent = registration;
+});
+http
+  .createServer((request, response) => {
+    let url = request.url;
+    response.writeHead(200, { "content-Type": "text/html"});
+    switch (url) {
+        case "/project":
+            response.write(projectContent);
+            response.end();
+            break;
+        case "/registration":
+            response.write(registrationContent);
+            response.end();
+            break;
+        default:
+            response.write(homeContent);
+            response.end();
+            break;
     }
-
-function saveUserData(userData)
-{
-    const existingUserData=JSON.parse(localStorage.getItem('userList')) || [];
-    existingUserData.push(userData);
-    localStorage.setItem('userList',JSON.stringify(existingUserData));
-}
-function updateUserDataTable() 
-{
-    userDataTableBody.innerHTML = '';
-    const userList = JSON.parse(localStorage.getItem('userList')) || [];
-    userList.forEach((userData) => {
-        const userDataRow = createUserDataTableRow(userData);
-        userDataTableBody.appendChild(userDataRow);
-    });
-    if (userList.length > 0) {
-        userDataTable.classList.remove('hidden');
-    }else{
-        userDataTable.classList.add('hidden');
-        }
-    }
-function createUserDataTableRow(userData) {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-    <td>${userData.name}</td>
-    <td>${userData.email}</td>
-    <td>${userData.password}</td>
-    <td>${userData.dob}</td>
-    <td>${userData.terms ? 'true' : 'false'}</td>
-    `;
-    return row;
-}
-function clearForm() {
-    registrationForm.reset();
-}
+  })
+  .listen(port);
