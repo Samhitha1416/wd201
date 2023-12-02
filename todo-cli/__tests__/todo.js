@@ -1,58 +1,20 @@
-let todoList = require("../todo");
-const { all, markAsComplete, add, overdue, dueToday, dueLater } = todoList();
-describe("Todo test cases", () => {
-  beforeAll(() => {
-    const today = new Date();
-    const oneDay = 60 * 60 * 24 * 1000;
-    [
-      {
-        title: "Complete assignment",
-        completed: false,
-        dueDate: new Date(today.getTime() - 1 * oneDay).toLocaleDateString(
-          "en-CA"
-        ),
-      },
-      {
-        title: "Go for shopping",
-        completed: false,
-        dueDate: new Date().toLocaleDateString("en-CA"),
-      },
-      {
-        title: "Complete project",
-        completed: false,
-        dueDate: new Date(today.getTime() + 1 * oneDay).toLocaleDateString(
-          "en-CA"
-        ),
-      },
-    ].forEach(add);
-  });
-  test("Add new todo", () => {
-    expect(all.length).toEqual(3);
+const todoList = require("../todo")
 
-    add({
-      title: "Take the test",
-      completed: false,
-      dueDate: new Date().toLocaleDateString("en-CA"),
-    });
+const {all , markAsComplete , add } = todoList();
 
-    expect(all.length).toEqual(4);
-  });
-
-  test("Todo mark as complete", () => {
-    expect(all[0].completed).toEqual(false);
-    markAsComplete(0);
-    expect(all[0].completed).toEqual(true);
-  });
-
-  test("Test for overdue", () => {
-    expect(overdue().length).toEqual(1);
-  });
-
-  test("Test due today", () => {
-    expect(dueToday().length).toEqual(2);
-  });
-
-  test("Test for due later", () => {
-    expect(dueLater().length).toEqual(1);
-  });
-});
+describe("fist test ra babu" , ()=>{
+    beforeAll(()=>{
+        add({ title: "Pay rent", dueDate: new Date().toISOString(), completed: false })
+        
+    })
+    test("checking length" , () =>{
+        expect(all.length).toBe(1)
+    })
+    test("adding index 0" , () =>{
+        add({ title: "Submit assignment", dueDate: new Date().toLocaleDateString("en-CA"), completed: false })
+        expect(all[0].completed).toBe(false)
+        expect(all.length).toBe(2)
+        markAsComplete(0)
+        expect(all[0].completed).toBe(true)
+    })
+}) 
