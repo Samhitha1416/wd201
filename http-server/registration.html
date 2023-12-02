@@ -1,103 +1,227 @@
-
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registration Form</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding-top: 88px;
-      margin: 0;
-    }
-    .container {
-      max-width: 400px;
-      margin: 0 auto;
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-    }
-    input#email:invalid:focus{
-        border: 1px solid red;
-    }
-    input {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 16px;
-      box-sizing: border-box;
-    }
-    button {
-      background-color: #4caf50;
-      color: white;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    #savedData {
-    margin-top: 20px;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-  }
-  th, td {
-    padding: 8px;
-    text-align: left;
-    border: 1px solid #000000;
-  }
-  
-  
-    .error {
-      color: red;
-      margin-top: 5px;
-    }
+<html>
 
-  </style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <link rel="stylesheet" href="output.css">
+    <style>
+        input#name:invalid:focus {
+            border: 1px solid red;
+        }
+
+        input#email:invalid:focus {
+            border: 1px solid red;
+        }
+
+        input#dob:invalid:focus {
+            border: 1px solid red;
+        }
+    </style>
 </head>
 
-<body>
-<div class="container">
-  <h2>Registration Form</h2>
-  <form id="user-form" onsubmit="return validateAge()" >
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required>
-  
+<body class="flex justify-center align-middle bg-gray-50">
+    <div class="wrapper bg-white shadow-xl ring-1 rounded-sm w-80 pt-6">
+        <form id="user-form" class="w-80 h-40">
+            <h1 class="flex font-bold text-2xl justify-center align-middle">Registration Form</h1>
 
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required>
+            <label for="name" class="w-40 inline-block">Name</label>
+            <input type="text" class="w-40" id="name" name="name" placeholder="Enter your name" required>
+
+            <label for="email" class="w-40 inline-block">Email</label>
+            <input type="email" id="email" name="email" placeholder="Enter email" required>
+
+            <label for="password" class="w-40 inline-block">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter password" required>
+
+            <label for="dob" class="w-40 inline-block">Date of Birth</label>
+            <input type="date" class=" w-80 inline-block" id="dob" name="dob" required>
+
+            <input type="checkbox" id="t&c" name="t&c">
+            <label for="t&c">Accept Terms & Conditions</label>
+
+            <button type="submit" class="bg-green-500 w-40 align-middle justify-center">Submit</button>
+        </form>
+    </div>
+
+    <div class=" flex relative bg-white px-6 mt-5 pb-8 pt-10 sm:mx-auto sm:px-10 sm:rounded-lg">
+        <div class="mx-auto">
+            <h2 class="flex font-bold text-2xl justify-center align-middle">Entries</h2>
+            <div id="user-entries" class="divide-y divide-gray-300/5">
+            </div>
+        </div>
+    </div>
+    <a href="/" class="text-blue-500 block mt-4 text-center">Back to Home</a>
+<<<<<<< HEAD
+    <script>
+        const dobInput = document.getElementById("dob");
+        dobInput.addEventListener("input", () => validate(dobInput.value));
+        
+        function validate(dobValue) {
+            const today = new Date();
+            const dobDate = new Date(dobValue);
+        
+            const age = today.getFullYear() - dobDate.getFullYear();
+        
+            if (age < 18 || age > 55) {
+                dobInput.setCustomValidity("You must be between 18 and 55 years old to register.");
+                dobInput.reportValidity();
+            } else {
+                dobInput.setCustomValidity("");
+            }
+        }
+        
+        let userForm = document.getElementById('user-form');
+        
+        let retrieveEntries = () => {
+            let entries = localStorage.getItem('userEntries');
+            if (entries) {
+                entries = JSON.parse(entries);
+            } else {
+                entries = [];
+            }
+            return entries;
+        };
+        
+        const displayEntries = () => {
+            const entries = retrieveEntries();
+        
+            const tableEntries = entries.map((entry) => {
+                const nameCell = `<td class='border px-4 py-2'>${entry.name}</td>`;
+                const emailCell = `<td class='border px-4 py-2'>${entry.email}</td>`;
+                const passwordCell = `<td class='border px-4 py-2'>${entry.password}</td>`;
+                const dobCell = `<td class='border px-4 py-2'>${entry.dob}</td>`;
+                const t_cCell = `<td class='border px-4 py-2'>${entry.t_c ? 'true' : 'false'}</td>`;
+        
+                const row = `<tr>${nameCell} ${emailCell} ${passwordCell} ${dobCell} ${t_cCell}</tr>`;
+                return row;
+            }).join("\n");
+        
+            const table = `<table class="table-auto w-full borde border-collapse border-gray-300"">
+                <tr>
+                    <th class="px-4 py-2 border">Name</th>
+                    <th class="px-4 py-2 border">Email</th>
+                    <th class="px-4 py-2 border">Password</th>
+                    <th class="px-4 py-2 border">Dob</th>
+                    <th class="px-4 py-2 border">Accepted Terms?</th>
+                </tr>
+                ${tableEntries}
+            </table>`;
+        
+            let details = document.getElementById('user-entries');
+            details.innerHTML = table;
+        };
+        
+        const saveUserForm = (event) => {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const dob = document.getElementById('dob').value;
+            const t_c = document.getElementById('t&c').checked;
+            
+            const entry = {
+                name: name,
+                email: email,
+                password: password,
+                dob: dob,
+                t_c: t_c
+            };
+            userEntries = retrieveEntries();
+            userEntries.push(entry); 
+        
+            localStorage.setItem('userEntries', JSON.stringify(userEntries));
+            displayEntries();
+        };
+        
+        userForm.addEventListener('submit', saveUserForm);
+        displayEntries();</script>
+=======
+    <script >
+const dobInput = document.getElementById("dob");
+dobInput.addEventListener("input", () => validate(dobInput.value));
+
+function validate(dobValue) {
+    const today = new Date();
+    const dobDate = new Date(dobValue);
+
+    const age = today.getFullYear() - dobDate.getFullYear();
+
+    if (age < 18 || age > 55) {
+        dobInput.setCustomValidity("You must be between 18 and 55 years old to register.");
+        dobInput.reportValidity();
+    } else {
+        dobInput.setCustomValidity("");
+    }
+}
+
+let userForm = document.getElementById('user-form');
+
+let retrieveEntries = () => {
+    let entries = localStorage.getItem('userEntries');
+    if (entries) {
+        entries = JSON.parse(entries);
+    } else {
+        entries = [];
+    }
+    return entries;
+};
+
+const displayEntries = () => {
+    const entries = retrieveEntries();
+
+    const tableEntries = entries.map((entry) => {
+        const nameCell = `<td class='border px-4 py-2'>${entry.name}</td>`;
+        const emailCell = `<td class='border px-4 py-2'>${entry.email}</td>`;
+        const passwordCell = `<td class='border px-4 py-2'>${entry.password}</td>`;
+        const dobCell = `<td class='border px-4 py-2'>${entry.dob}</td>`;
+        const t_cCell = `<td class='border px-4 py-2'>${entry.t_c ? 'true' : 'false'}</td>`;
+
+        const row = `<tr>${nameCell} ${emailCell} ${passwordCell} ${dobCell} ${t_cCell}</tr>`;
+        return row;
+    }).join("\n");
+
+    const table = `<table class="table-auto w-full borde border-collapse border-gray-300"">
+        <tr>
+            <th class="px-4 py-2 border">Name</th>
+            <th class="px-4 py-2 border">Email</th>
+            <th class="px-4 py-2 border">Password</th>
+            <th class="px-4 py-2 border">Dob</th>
+            <th class="px-4 py-2 border">Accepted Terms?</th>
+        </tr>
+        ${tableEntries}
+    </table>`;
+
+    let details = document.getElementById('user-entries');
+    details.innerHTML = table;
+};
+
+const saveUserForm = (event) => {
+    event.preventDefault();
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const dob = document.getElementById('dob').value;
+    const t_c = document.getElementById('t&c').checked;
     
+    const entry = {
+        name: name,
+        email: email,
+        password: password,
+        dob: dob,
+        t_c: t_c
+    };
+    userEntries = retrieveEntries();
+    userEntries.push(entry); 
 
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required>
-   
-     
-    <label for="dob">Date of Birth</label>
-    <input type="date" id="dob" name="dob">
-    
-    <label for="acceptTerms">Accept Terms & Conditions</label>
-    <input type="checkbox" id="acceptTerms" name="acceptTerms">
-   
+    localStorage.setItem('userEntries', JSON.stringify(userEntries));
+    displayEntries();
+};
 
-    <button type="submit">Submit</button>
-  </form>
-  <div 
-    class="relative bg-white px-6 mt-5 pt-10 pb-8 shadow-xl ring-1 ring-gray-908/5 sm:mx-auto s: rounded-1g sn:px-10">
-    <div class="mx-auto">
-      <h2 class="text-3x1 text-center font-bold leading-tight">Entries</h2>
-      <div class="divide-y divide-gray-300/50" id="user-entries"></div>
-</div>
-
-
-<script src="index.js">
-</script>
-
+userForm.addEventListener('submit', saveUserForm);
+displayEntries();</script>
+>>>>>>> 84f79871f57396b2ad0123fe3679c77d5fc4f324
 </body>
-</html>
 
+</html>
